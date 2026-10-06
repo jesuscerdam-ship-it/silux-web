@@ -1,0 +1,250 @@
+from flask import Flask, send_from_directory, Response
+import os
+
+app = Flask(__name__)
+
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+DOWNLOADS = os.path.join(BASE_DIR, "downloads")
+
+PORTABLE = "Silux.zip"
+INSTALADOR = "SILUX_4.0_Setup.exe"
+
+
+HTML = """
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>SILUX</title>
+
+<style>
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    background: #050505;
+    color: white;
+    font-family: Arial, sans-serif;
+    text-align: center;
+}
+
+.logo {
+    margin-top: 70px;
+    font-size: 70px;
+    font-weight: bold;
+    animation: rgb 5s linear infinite;
+}
+
+@keyframes rgb {
+    0%   { color: #ff0000; }
+    20%  { color: #ffff00; }
+    40%  { color: #00ff00; }
+    60%  { color: #00ffff; }
+    80%  { color: #0066ff; }
+    100% { color: #ff00ff; }
+}
+
+.subtitulo {
+    color: #777;
+    letter-spacing: 4px;
+    margin-top: 5px;
+}
+
+.aviso {
+    max-width: 700px;
+    margin: 45px auto 25px;
+    padding: 18px;
+    border: 1px solid #222;
+    background: #0b0b0b;
+    color: #aaa;
+}
+
+.aviso strong {
+    color: #ffcc00;
+}
+
+.descargas {
+    display: flex;
+    justify-content: center;
+    gap: 25px;
+    max-width: 850px;
+    margin: 30px auto;
+    padding: 20px;
+}
+
+.tarjeta {
+    width: 350px;
+    padding: 35px 25px;
+    background: #0b0b0b;
+    border: 1px solid #222;
+    border-radius: 12px;
+}
+
+.tarjeta h2 {
+    margin-top: 0;
+}
+
+.tarjeta p {
+    color: #777;
+    min-height: 45px;
+}
+
+.boton {
+    display: inline-block;
+    padding: 15px 25px;
+    margin-top: 15px;
+    background: #00ff88;
+    color: #000;
+    text-decoration: none;
+    font-weight: bold;
+    border-radius: 6px;
+}
+
+.boton:hover {
+    background: #00ffaa;
+}
+
+footer {
+    color: #444;
+    margin-top: 50px;
+}
+
+@media(max-width: 750px) {
+    .descargas {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .tarjeta {
+        width: 90%;
+    }
+
+    .logo {
+        font-size: 50px;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<div class="logo">SILUX</div>
+
+<div class="subtitulo">
+MINECRAFT LAUNCHER
+</div>
+
+<div class="aviso">
+<strong>IMPORTANTE</strong><br><br>
+Si Windows muestra una advertencia de seguridad al ejecutar SILUX,
+revisa el bloqueo de aplicaciones de Windows antes de instalarlo.
+</div>
+
+<div class="descargas">
+
+    <div class="tarjeta">
+        <h2>PORTABLE</h2>
+
+        <p>
+        Ejecuta SILUX sin una instalación tradicional.
+        Incluye los archivos necesarios del launcher.
+        </p>
+
+        <a class="boton" href="/descargar/portable">
+            DESCARGAR PORTABLE
+        </a>
+    </div>
+
+    <div class="tarjeta">
+        <h2>INSTALADOR</h2>
+
+        <p>
+        Instala SILUX en Windows mediante el instalador.
+        </p>
+
+        <a class="boton" href="/descargar/instalador">
+            DESCARGAR INSTALADOR
+        </a>
+    </div>
+
+</div>
+
+<footer>
+SILUX
+</footer>
+
+</body>
+</html>
+"""
+
+
+@app.route("/")
+def inicio():
+    return Response(HTML, mimetype="text/html")
+
+
+@app.route("/descargar/portable")
+def descargar_portable():
+
+    archivo = os.path.join(
+        DOWNLOADS,
+        PORTABLE
+    )
+
+    if not os.path.isfile(archivo):
+        return "No se encuentra Silux.zip", 404
+
+    return send_from_directory(
+        DOWNLOADS,
+        PORTABLE,
+        as_attachment=True
+    )
+
+
+@app.route("/descargar/instalador")
+def descargar_instalador():
+
+    archivo = os.path.join(
+        DOWNLOADS,
+        INSTALADOR
+    )
+
+    if not os.path.isfile(archivo):
+        return "No se encuentra SILUX_4.0_Setup.exe", 404
+
+    return send_from_directory(
+        DOWNLOADS,
+        INSTALADOR,
+        as_attachment=True
+    )
+
+
+if __name__ == "__main__":
+
+    print("")
+    print("========================================")
+    print("          SILUX WEB")
+    print("========================================")
+    print("Carpeta de descargas:")
+    print(DOWNLOADS)
+    print("")
+    print("Portable:")
+    print(os.path.join(DOWNLOADS, PORTABLE))
+    print("")
+    print("Instalador:")
+    print(os.path.join(DOWNLOADS, INSTALADOR))
+    print("")
+    print("WEB:")
+    print("http://127.0.0.1:5000")
+    print("========================================")
+    print("")
+
+    app.run(
+        host="0.0.0.0",
+        port=5000,
+        debug=False
+    )
